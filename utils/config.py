@@ -16,28 +16,32 @@ class BaseDBSettings(BaseSettings):
     def connection_url_template(self) -> str:
         """
         Returns the template for database connection URL.
-        This method can be used to construct the full connection URL.
+        This property can be used to construct the full connection URL.
         """
-        return f"{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return (
+            f"{self.DB_USER}:{self.DB_PASS}@"
+            f"{self.DB_HOST}:{self.DB_PORT}/"
+            f"{self.DB_NAME}"
+        )
 
 
 class PostgreSQLSettings(BaseDBSettings):
     """
     Class for PostgreSQL database settings configuration.
-    Provides methods to generate PostgreSQL connection URL.
+    Provides properties to generate PostgreSQL connection URL.
     """
 
     @property
     def psycopg_connection_url(self) -> str:
         """
-        Generates psycopg PostgreSQL connection URL using the provided parameters.
+        Generates psycopg PostgreSQL connection URL.
         """
         return f"postgresql+psycopg://{self.connection_url_template}"
 
     @property
     def asyncpg_connection_url(self) -> str:
         """
-        Generates asyncpg PostgreSQL connection URL using the provided parameters.
+        Generates asyncpg PostgreSQL connection URL.
         """
         return f"postgresql+asyncpg://{self.connection_url_template}"
 
