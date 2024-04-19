@@ -1,4 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class BaseDBSettings(BaseSettings):
@@ -44,8 +47,6 @@ class PostgreSQLSettings(BaseDBSettings):
         Generates asyncpg PostgreSQL connection URL.
         """
         return f"postgresql+asyncpg://{self.connection_url_template}"
-
-    model_config = SettingsConfigDict(env_file="../.env")
 
 
 settings = PostgreSQLSettings()
