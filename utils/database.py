@@ -1,4 +1,4 @@
-from config import settings
+from utils.config import settings
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
@@ -21,13 +21,22 @@ def checking_connection_database() -> str:
             )
             return success_message
 
-    except Exception as error:
-        error_message = f"Database connection error: {error}"
+    except Exception as e:
+        error_message = f"Database connection error: {e}"
         return error_message
 
 
 class Base(DeclarativeBase):
-    pass
+    repr_cols_num = 3
+    repr_cols = tuple()
+
+    def __repr__(self):
+        cols = []
+        for idx, col in enumerate(self.__table__.columns.keys()):
+            if col in self.repr_cols or idx < self.repr_cols_num:
+                cols.append(f"{col}={getattr(self, col)}")
+
+        return f"<{self.__class__.__name__} {','.join(cols)}>"
 
 
 if __name__ == '__main__':
