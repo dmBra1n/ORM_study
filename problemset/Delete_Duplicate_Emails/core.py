@@ -1,7 +1,7 @@
+from models import metadata_obj
 from sqlalchemy import text
 
-from utils.database import sync_engine, session_factory
-from models import metadata_obj
+from utils.database import session_factory, sync_engine
 
 
 class SyncCore:

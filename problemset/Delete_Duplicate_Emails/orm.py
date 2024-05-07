@@ -1,8 +1,8 @@
-from sqlalchemy import select
-from utils.database import sync_engine, session_factory, Base
-from models import PersonOrm
-
 from fetch_data import fetch_data_from_sql_query
+from models import PersonOrm
+from sqlalchemy import delete, exists, func, select
+
+from utils.database import Base, session_factory, sync_engine
 
 
 class SyncORM:
@@ -36,3 +36,19 @@ class SyncORM:
             res = session.execute(query)
             result = res.scalars().all()
             print(result)
+
+    @staticmethod
+    def delete_duplicate_emails():
+        with session_factory() as session:
+            subq = (
+                select(func.min(PersonOrm.id).label("id"))
+                .group_by(PersonOrm.email)
+                .subquery()
+            )
+            query = (
+                delete(PersonOrm)
+                .where(~exists().where(PersonOrm.id == subq.c.id))
+            )
+
+            session.execute(query)
+            session.commit()

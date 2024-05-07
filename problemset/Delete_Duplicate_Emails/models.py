@@ -1,7 +1,9 @@
-from sqlalchemy import MetaData, Table, Column, Integer, VARCHAR
 from typing import Annotated
-from utils.database import Base
+
+from sqlalchemy import VARCHAR, Column, Integer, MetaData, Table
 from sqlalchemy.orm import Mapped, mapped_column
+
+from utils.database import Base
 
 intpk = Annotated[int, mapped_column(primary_key=True, autoincrement=True)]
 

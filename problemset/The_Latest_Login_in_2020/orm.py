@@ -1,8 +1,8 @@
-from sqlalchemy import select, func, extract
-
-from utils.database import sync_engine, session_factory, Base
-from models import LoginsOrm
 from fetch_data import fetch_data_from_sql_query
+from models import LoginsOrm
+from sqlalchemy import extract, func, select
+
+from utils.database import Base, session_factory, sync_engine
 
 
 class SyncORM:
