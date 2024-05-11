@@ -1,53 +1,57 @@
-# import re
-
-
-# def fetch_data_from_sql_query():
-#     try:
-#         user_id_and_time_stamp = []
-#         with open("add_data.sql", "r") as file:
-#             for line in file:
-#                 values = re.search(r"values \('(\d+)', '(.*)'\)", line)
-#                 id = int(values.group(1))
-#                 email = values.group(2)
-#                 user_id_and_time_stamp.append((id, email))
-#
-#             return user_id_and_time_stamp
-#
-#     except Exception as e:
-#         raise Exception(f"An error occurred while fetching data from SQL query: {e}")
-
-
 import re
 from itertools import zip_longest
+from typing import List
 
 
-def fetch_data_from_sql_query(file_path):
+def extract_columns(line: str) -> List[str]:
+    """
+    Extracts column names from an SQL query line enclosed in parentheses.
+    :param: A line from an SQL query.
+    :return: A list of column names extracted from the line.
+    """
+    columns_pattern = r"\((.*?)\)"
+    columns = re.search(columns_pattern, line).group(1)
+    return [col.strip() for col in columns.split(',')]
 
-    data_list = {
+
+def extract_values(line: str) -> List[any]:
+    """
+    Extracts values from an SQL query line enclosed in parentheses.
+    :param: A line from an SQL query.
+    :return: A list of values extracted from the line.
+    """
+    values_pattern = r"values \((.*?)\)"
+    values = re.search(values_pattern, line).group(1)
+    values_list = re.findall(r"'(.*?)'", values)
+    return [int(val) if val.isdigit() else val for val in values_list]
+
+
+def fetch_data_from_sql_query(file_path: str) -> dict:
+    """
+    Fetches data from an SQL query file, extracting columns and values.
+    :param: Path to the SQL query file.
+    :return: A dictionary containing the table name and data extracted from the SQL query.
+    """
+    extracted_data = {
         "name_table": None,
         "data": []
     }
 
     table_pattern = r"insert into (\w+)"
-    columns_pattern = r"\((.*?)\)"
-    values_pattern = r"values \((.*?)\)"
 
     try:
         with open(file_path, "r") as file:
             for line in file:
-                columns = re.search(columns_pattern, line).group(1)
-                values = re.search(values_pattern, line).group(1)
+                columns = extract_columns(line)
+                values = extract_values(line)
 
-                columns_list = [col.strip() for col in columns.split(',')]
-                values_list = re.findall(r"'(.*?)'", values)
-
-                columns_values = dict(zip_longest(columns_list, values_list))
-                data_list["data"].append(columns_values)
+                columns_values = dict(zip_longest(columns, values))
+                extracted_data["data"].append(columns_values)
 
             table_name = re.search(table_pattern, line).group(1)
-            data_list["name_table"] = table_name.lower()
+            extracted_data["name_table"] = table_name.lower()
 
-        return data_list
+        return extracted_data
 
     except Exception as e:
         raise Exception(f"An error occurred while fetching data from SQL query: {e}")

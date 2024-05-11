@@ -4,11 +4,11 @@ from problemset.The_Latest_Login_in_2020.orm import SyncORM
 
 def main():
     SyncCore.create_tables()
-    SyncCore.insert_data()
+    SyncCore.insert_data('add_data.sql')
     SyncCore.latest_login_in_2020()
 
     SyncORM.create_tables()
-    SyncORM.insert_data()
+    SyncORM.insert_data('add_data.sql')
     SyncORM.latest_login_in_2020()
 
 

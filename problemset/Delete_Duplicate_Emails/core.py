@@ -12,9 +12,9 @@ class SyncCore:
         metadata_obj.create_all(sync_engine)
 
     @staticmethod
-    def insert_data():
+    def insert_data(sql_file_path):
         try:
-            with session_factory() as session, open("add_data.sql", "r") as file:
+            with session_factory() as session, open(sql_file_path, "r") as file:
                 sql_queries = file.readlines()
                 for query in sql_queries:
                     session.execute(text(query.strip()))
