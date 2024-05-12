@@ -19,7 +19,7 @@ class LoginsOrm(Base):
 
 metadata_obj = MetaData()
 
-login_table = Table(
+logins_table = Table(
     "logins",
     metadata_obj,
     Column("user_id", Integer),

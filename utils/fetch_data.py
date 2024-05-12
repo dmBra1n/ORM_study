@@ -10,8 +10,12 @@ def extract_columns(line: str) -> List[str]:
     :return: A list of column names extracted from the line.
     """
     columns_pattern = r"\((.*?)\)"
-    columns = re.search(columns_pattern, line).group(1)
-    return [col.strip() for col in columns.split(',')]
+    columns_match = re.search(columns_pattern, line)
+    if columns_match:
+        columns = columns_match.group(1)
+        return [col.strip() for col in columns.split(',')]
+    else:
+        raise ValueError("The string does not contain the expected values in parentheses")
 
 
 def extract_values(line: str) -> List[any]:
@@ -21,9 +25,13 @@ def extract_values(line: str) -> List[any]:
     :return: A list of values extracted from the line.
     """
     values_pattern = r"values \((.*?)\)"
-    values = re.search(values_pattern, line).group(1)
-    values_list = re.findall(r"'(.*?)'", values)
-    return [int(val) if val.isdigit() else val for val in values_list]
+    values_match = re.search(values_pattern, line)
+    if values_match:
+        values = values_match.group(1)
+        values_list = re.findall(r"'(.*?)'", values)
+        return [int(val) if val.isdigit() else val for val in values_list]
+    else:
+        raise ValueError("The string does not contain the expected values in parentheses")
 
 
 def fetch_data_from_sql_query(file_path: str) -> dict:
