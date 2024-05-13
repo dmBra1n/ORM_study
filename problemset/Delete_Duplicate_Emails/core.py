@@ -30,7 +30,7 @@ class SyncCore:
             query = """SELECT * FROM Person"""
             result = session.execute(text(query))
             emails = result.all()
-            print(f"emails: {emails}")
+            print(emails)
 
     @staticmethod
     def delete_duplicate_emails():
