@@ -1,7 +1,6 @@
-from sqlalchemy.orm import aliased
-
 from models import TransactionsOrm, UsersOrm
 from sqlalchemy import func, select
+from sqlalchemy.orm import aliased
 
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query

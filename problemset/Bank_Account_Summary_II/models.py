@@ -1,7 +1,7 @@
 import datetime
 
-from sqlalchemy import (VARCHAR, Column, DateTime, ForeignKey, Integer,
-                        MetaData, Table)
+from sqlalchemy import (VARCHAR, Column, Date, ForeignKey, Integer, MetaData,
+                        Table)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from utils.database import Base
@@ -47,5 +47,5 @@ transactions_table = Table(
     Column("trans_id", Integer, primary_key=True),
     Column("account", ForeignKey("users.account", ondelete="CASCADE")),
     Column("amount", Integer),
-    Column("transacted_on", DateTime)
+    Column("transacted_on", Date)
 )
