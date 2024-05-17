@@ -1,6 +1,7 @@
-from utils.config import settings
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
+from utils.config import settings
 
 sync_engine = create_engine(
     url=settings.psycopg_connection_url,
