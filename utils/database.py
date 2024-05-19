@@ -40,6 +40,5 @@ class Base(DeclarativeBase):
         return f"<{self.__class__.__name__}({', '.join(cols)})>"
 
 
-
 if __name__ == '__main__':
     print(checking_connection_database())
