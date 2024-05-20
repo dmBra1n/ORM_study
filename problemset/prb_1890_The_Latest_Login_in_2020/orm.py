@@ -3,6 +3,7 @@ from sqlalchemy import extract, func, select
 
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncORM:
@@ -30,16 +31,12 @@ class SyncORM:
     def latest_login_in_2020():
         with session_factory() as session:
             query = (
-                select(LoginsOrm.user_id, func.max(LoginsOrm.time_stamp))
+                select(
+                    LoginsOrm.user_id,
+                    func.max(LoginsOrm.time_stamp).label("last_stamp")
+                )
                 .where(extract("year", LoginsOrm.time_stamp) == 2020)
                 .group_by(LoginsOrm.user_id)
             )
             result = session.execute(query)
-            logins_in_2020 = []
-
-            for user_id, timestamp in result.all():
-                formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                logins_in_2020.append((user_id, formatted_timestamp))
-
-            print(logins_in_2020)
-
+            DisplayUtils.display_results(result)

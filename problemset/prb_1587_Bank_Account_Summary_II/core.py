@@ -1,7 +1,8 @@
-from models import metadata_obj
 from sqlalchemy import text
 
+from problemset.prb_1587_Bank_Account_Summary_II.models import metadata_obj
 from utils.database import session_factory, sync_engine
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncCore:
@@ -14,7 +15,10 @@ class SyncCore:
     @staticmethod
     def insert_data(sql_file_path):
         try:
-            with session_factory() as session, open(sql_file_path, "r") as file:
+            with (
+                session_factory() as session,
+                open(sql_file_path, "r") as file
+            ):
                 sql_queries = file.readlines()
                 for query in sql_queries:
                     session.execute(text(query.strip()))
@@ -33,4 +37,4 @@ class SyncCore:
             GROUP BY u.account
             HAVING SUM(t.amount) >= 10000;"""
             result = session.execute(text(query))
-            print(result.all())
+            DisplayUtils.display_results(result)

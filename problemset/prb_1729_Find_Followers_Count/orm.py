@@ -1,10 +1,10 @@
 from models import FollowersOrm
 from sqlalchemy import func, select
 from sqlalchemy.orm import aliased
-from tabulate import tabulate
 
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncOrm:
@@ -40,7 +40,5 @@ class SyncOrm:
                 .group_by(followers.user_id)
                 .order_by(followers.user_id)
             )
-            res = session.execute(query)
-            result = res.all()
-            headers = ["user_id", "followers_count"]
-            print(tabulate(result, headers=headers, tablefmt='psql'))
+            result = session.execute(query)
+            DisplayUtils.display_results(result)
