@@ -1,9 +1,11 @@
-from models import TransactionsOrm, UsersOrm
 from sqlalchemy import func, select
 from sqlalchemy.orm import aliased
 
+from problemset.prb_1587_Bank_Account_Summary_II.models import (
+    TransactionsOrm, UsersOrm)
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncOrm:
@@ -48,12 +50,13 @@ class SyncOrm:
             u = aliased(UsersOrm)
             t = aliased(TransactionsOrm)
             query = (
-                select(u.name, func.sum(t.amount))
+                select(
+                    u.name,
+                    func.sum(t.amount).label("balance")
+                )
                 .join(t, u.account == t.account)
                 .group_by(u.account)
                 .having(func.sum(t.amount) > 10000)
             )
-
-            res = session.execute(query)
-            result = res.all()
-            print(result)
+            result = session.execute(query)
+            DisplayUtils.display_results(result)

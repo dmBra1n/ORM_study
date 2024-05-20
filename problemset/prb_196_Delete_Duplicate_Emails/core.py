@@ -1,7 +1,8 @@
-from models import metadata_obj
 from sqlalchemy import text
 
+from problemset.prb_196_Delete_Duplicate_Emails.models import metadata_obj
 from utils.database import session_factory, sync_engine
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncCore:
@@ -14,7 +15,10 @@ class SyncCore:
     @staticmethod
     def insert_data(sql_file_path):
         try:
-            with session_factory() as session, open(sql_file_path, "r") as file:
+            with (
+                session_factory() as session,
+                open(sql_file_path, "r") as file
+            ):
                 sql_queries = file.readlines()
                 for query in sql_queries:
                     session.execute(text(query.strip()))
@@ -29,14 +33,13 @@ class SyncCore:
         with session_factory() as session:
             query = """SELECT * FROM Person"""
             result = session.execute(text(query))
-            emails = result.all()
-            print(emails)
+            DisplayUtils.display_results(result)
 
     @staticmethod
     def delete_duplicate_emails():
         with session_factory() as session:
             query = (
-                """ DELETE FROM Person
+                """DELETE FROM Person
                     WHERE id NOT IN(
                         SELECT MIN(id)
                         FROM Person

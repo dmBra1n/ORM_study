@@ -1,8 +1,8 @@
-from models import metadata_obj
 from sqlalchemy import text
-from tabulate import tabulate
 
+from problemset.prb_1587_Bank_Account_Summary_II.models import metadata_obj
 from utils.database import session_factory, sync_engine
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncCore:
@@ -15,7 +15,10 @@ class SyncCore:
     @staticmethod
     def insert_data(sql_file_path):
         try:
-            with session_factory() as session, open(sql_file_path, "r") as file:
+            with (
+                session_factory() as session,
+                open(sql_file_path, "r") as file
+            ):
                 sql_queries = file.readlines()
                 for query in sql_queries:
                     session.execute(text(query.strip()))
@@ -26,15 +29,12 @@ class SyncCore:
             print(f"An error occurred: {e}")
 
     @staticmethod
-    def followers_count():
+    def bank_account_summary():
         with session_factory() as session:
-            query = (
-                """SELECT user_id, COUNT(follower_id) AS followers_count
-                FROM Followers
-                GROUP BY user_id
-                ORDER BY user_id"""
-            )
-            res = session.execute(text(query))
-            result = res.all()
-            headers = ["user_id", "followers_count"]
-            print(tabulate(result, headers=headers, tablefmt='psql'))
+            query = """
+            SELECT u.name, SUM(t.amount) AS balance
+            FROM users u JOIN transactions t ON u.account = t.account
+            GROUP BY u.account
+            HAVING SUM(t.amount) >= 10000;"""
+            result = session.execute(text(query))
+            DisplayUtils.display_results(result)

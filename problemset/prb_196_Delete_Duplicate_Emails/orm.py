@@ -1,8 +1,9 @@
-from models import PersonOrm
 from sqlalchemy import delete, exists, func, select
 
+from problemset.prb_196_Delete_Duplicate_Emails.models import PersonOrm
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncORM:
@@ -30,11 +31,10 @@ class SyncORM:
     def get_all_emails():
         with session_factory() as session:
             query = (
-                select(PersonOrm)
+                select(PersonOrm.id, PersonOrm.email)
             )
-            res = session.execute(query)
-            result = res.scalars().all()
-            print(result)
+            result = session.execute(query)
+            DisplayUtils.display_results(result)
 
     @staticmethod
     def delete_duplicate_emails():

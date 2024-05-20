@@ -1,6 +1,7 @@
-from utils.config import settings
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
+from utils.config import settings
 
 sync_engine = create_engine(
     url=settings.psycopg_connection_url,
@@ -37,7 +38,6 @@ class Base(DeclarativeBase):
                 cols.append(f"{col}={getattr(self, col)}")
 
         return f"<{self.__class__.__name__}({', '.join(cols)})>"
-
 
 
 if __name__ == '__main__':

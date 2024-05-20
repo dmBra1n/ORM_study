@@ -15,7 +15,9 @@ def extract_columns(line: str) -> List[str]:
         columns = columns_match.group(1)
         return [col.strip() for col in columns.split(',')]
     else:
-        raise ValueError("The string does not contain the expected values in parentheses")
+        raise ValueError(
+            "The string does not contain the expected values in parentheses"
+        )
 
 
 def extract_values(line: str) -> List[any]:
@@ -31,14 +33,17 @@ def extract_values(line: str) -> List[any]:
         values_list = re.findall(r"'(.*?)'", values)
         return [int(val) if val.isdigit() else val for val in values_list]
     else:
-        raise ValueError("The string does not contain the expected values in parentheses")
+        raise ValueError(
+            "The string does not contain the expected values in parentheses"
+        )
 
 
 def fetch_data_from_sql_query(file_path: str) -> dict:
     """
     Fetches data from an SQL query file, extracting columns and values.
     :param: Path to the SQL query file.
-    :return: A dictionary containing the table name and data extracted from the SQL query.
+    :return: A dictionary containing the table name and
+    data extracted from the SQL query.
     """
     extracted_data = {
         "name_table": None,
@@ -62,4 +67,6 @@ def fetch_data_from_sql_query(file_path: str) -> dict:
         return extracted_data
 
     except Exception as e:
-        raise Exception(f"An error occurred while fetching data from SQL query: {e}")
+        raise Exception(
+            f"An error occurred while fetching data from SQL query: {e}"
+        )

@@ -1,24 +1,26 @@
-from models import LoginsOrm
-from sqlalchemy import extract, func, select
+from models import FollowersOrm
+from sqlalchemy import func, select
+from sqlalchemy.orm import aliased
 
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
-class SyncORM:
+class SyncOrm:
     @staticmethod
     def create_tables():
         Base.metadata.drop_all(sync_engine)
         Base.metadata.create_all(sync_engine)
 
     @staticmethod
-    def insert_data(sql_file_path):
+    def insert_followers(sql_file_path):
         try:
             with session_factory() as session:
                 data = fetch_data_from_sql_query(sql_file_path)
 
                 for row in data["data"]:
-                    session.add(LoginsOrm(**row))
+                    session.add(FollowersOrm(**row))
 
                 session.commit()
 
@@ -27,19 +29,16 @@ class SyncORM:
             print(f"An error occurred: {e}")
 
     @staticmethod
-    def latest_login_in_2020():
+    def followers_count():
         with session_factory() as session:
+            followers = aliased(FollowersOrm)
             query = (
-                select(LoginsOrm.user_id, func.max(LoginsOrm.time_stamp))
-                .where(extract("year", LoginsOrm.time_stamp) == 2020)
-                .group_by(LoginsOrm.user_id)
+                select(
+                    followers.user_id,
+                    func.count(followers.follower_id).label("followers_count")
+                )
+                .group_by(followers.user_id)
+                .order_by(followers.user_id)
             )
             result = session.execute(query)
-            logins_in_2020 = []
-
-            for user_id, timestamp in result.all():
-                formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                logins_in_2020.append((user_id, formatted_timestamp))
-
-            print(logins_in_2020)
-
+            DisplayUtils.display_results(result)

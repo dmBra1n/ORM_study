@@ -1,7 +1,7 @@
 import datetime
 from typing import Annotated
 
-from sqlalchemy import Column, DateTime, Integer, MetaData, Table
+from sqlalchemy import Column, Date, Integer, MetaData, Table
 from sqlalchemy.orm import Mapped, mapped_column
 
 from utils.database import Base
@@ -19,7 +19,6 @@ class ActivityOrm(Base):
     games_played: Mapped[int]
 
 
-
 metadata_obj = MetaData()
 
 activity_table = Table(
@@ -28,6 +27,6 @@ activity_table = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("player_id", Integer),
     Column("device_id", Integer),
-    Column("event_date", DateTime),
+    Column("event_date", Date),
     Column("games_played", Integer),
 )

@@ -1,26 +1,25 @@
-from models import FollowersOrm
-from sqlalchemy import func, select
-from sqlalchemy.orm import aliased
-from tabulate import tabulate
+from models import LoginsOrm
+from sqlalchemy import extract, func, select
 
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
-class SyncOrm:
+class SyncORM:
     @staticmethod
     def create_tables():
         Base.metadata.drop_all(sync_engine)
         Base.metadata.create_all(sync_engine)
 
     @staticmethod
-    def insert_followers(sql_file_path):
+    def insert_data(sql_file_path):
         try:
             with session_factory() as session:
                 data = fetch_data_from_sql_query(sql_file_path)
 
                 for row in data["data"]:
-                    session.add(FollowersOrm(**row))
+                    session.add(LoginsOrm(**row))
 
                 session.commit()
 
@@ -29,18 +28,15 @@ class SyncOrm:
             print(f"An error occurred: {e}")
 
     @staticmethod
-    def followers_count():
+    def latest_login_in_2020():
         with session_factory() as session:
-            followers = aliased(FollowersOrm)
             query = (
                 select(
-                    followers.user_id,
-                    func.count(followers.follower_id).label("followers_count")
+                    LoginsOrm.user_id,
+                    func.max(LoginsOrm.time_stamp).label("last_stamp")
                 )
-                .group_by(followers.user_id)
-                .order_by(followers.user_id)
+                .where(extract("year", LoginsOrm.time_stamp) == 2020)
+                .group_by(LoginsOrm.user_id)
             )
-            res = session.execute(query)
-            result = res.all()
-            headers = ["user_id", "followers_count"]
-            print(tabulate(result, headers=headers, tablefmt='psql'))
+            result = session.execute(query)
+            DisplayUtils.display_results(result)

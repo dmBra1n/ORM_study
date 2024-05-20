@@ -2,6 +2,7 @@ from models import metadata_obj
 from sqlalchemy import text
 
 from utils.database import session_factory, sync_engine
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncCore:
@@ -14,7 +15,10 @@ class SyncCore:
     @staticmethod
     def insert_data(sql_file_path):
         try:
-            with session_factory() as session, open(sql_file_path, "r") as file:
+            with (
+                session_factory() as session,
+                open(sql_file_path, "r") as file
+            ):
                 sql_queries = file.readlines()
                 for query in sql_queries:
                     session.execute(text(query.strip()))
@@ -25,12 +29,13 @@ class SyncCore:
             print(f"An error occurred: {e}")
 
     @staticmethod
-    def bank_account_summary():
+    def latest_login_in_2020():
         with session_factory() as session:
-            query = """
-            SELECT u.name, SUM(t.amount) AS balance
-            FROM users u JOIN transactions t ON u.account = t.account
-            GROUP BY u.account
-            HAVING SUM(t.amount) >= 10000;"""
+            query = (
+                """SELECT user_id, MAX(time_stamp) as last_stamp
+                FROM Logins
+                WHERE EXTRACT(YEAR FROM time_stamp) = 2020 
+                GROUP BY user_id;"""
+            )
             result = session.execute(text(query))
-            print(result.all())
+            DisplayUtils.display_results(result)

@@ -4,6 +4,7 @@ from sqlalchemy.orm import aliased
 
 from utils.database import Base, session_factory, sync_engine
 from utils.fetch_data import fetch_data_from_sql_query
+from utils.sqlalchemy_helpers import DisplayUtils
 
 
 class SyncOrm:
@@ -33,19 +34,15 @@ class SyncOrm:
             with session_factory() as session:
                 a = aliased(ActivityOrm)
                 query = (
-                    select(a.player_id, func.min(a.event_date).label("first_login"))
+                    select(
+                        a.player_id,
+                        func.min(a.event_date).label("first_login")
+                    )
                     .group_by(a.player_id)
                     .order_by(a.player_id)
                 )
-
                 result = session.execute(query)
-                first_login = []
-
-                for user_id, timestamp in result.all():
-                    formatted_timestamp = timestamp.strftime('%Y-%m-%d')
-                    first_login.append((user_id, formatted_timestamp))
-
-                print(first_login)
+                DisplayUtils.display_results(result)
 
         except Exception as e:
             print(f"An error occurred during the database query: {e}")

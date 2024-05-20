@@ -1,6 +1,8 @@
-from sqlalchemy import inspect, text
-from utils.database import sync_engine
 from typing import List
+
+from sqlalchemy import inspect, text
+
+from utils.database import sync_engine
 
 
 def delete_all_tables(tables: List[str]):
