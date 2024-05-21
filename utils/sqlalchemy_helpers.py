@@ -1,6 +1,9 @@
 from sqlalchemy.engine.cursor import ResultProxy
 from tabulate import tabulate
 
+from utils.database import Base, sync_engine, session_factory
+from utils.fetch_data import fetch_data_from_sql_query
+
 
 class DisplayUtils:
     """
@@ -28,3 +31,25 @@ class DisplayUtils:
             ))
         else:
             print("No objects to display")
+
+
+class BaseOrmQuery:
+    @staticmethod
+    def create_tables():
+        Base.metadata.drop_all(sync_engine)
+        Base.metadata.create_all(sync_engine)
+
+    @staticmethod
+    def insert_data(clss_table, sql_file_path):
+        try:
+            with session_factory() as session:
+                data = fetch_data_from_sql_query(sql_file_path)
+
+                for row in data["data"]:
+                    session.add(clss_table(**row))
+
+                session.commit()
+
+        except Exception as e:
+            session.rollback()
+            print(f"An error occurred: {e}")
