@@ -1,7 +1,7 @@
+from sqlalchemy import text
 from sqlalchemy.engine.cursor import ResultProxy
 from tabulate import tabulate
 
-from utils.database import Base, sync_engine, session_factory
 from utils.fetch_data import fetch_data_from_sql_query
 
 
@@ -33,23 +33,52 @@ class DisplayUtils:
             print("No objects to display")
 
 
-class BaseOrmQuery:
-    @staticmethod
-    def create_tables():
-        Base.metadata.drop_all(sync_engine)
-        Base.metadata.create_all(sync_engine)
+class BaseCore:
+    def __init__(self, engine, metadata, session):
+        self.engine = engine
+        self.metadata = metadata
+        self.session = session
 
-    @staticmethod
-    def insert_data(clss_table, sql_file_path):
+    def create_tables(self):
+        self.metadata.reflect(bind=self.engine)
+        self.metadata.drop_all(self.engine)
+        self.metadata.create_all(self.engine)
+
+    def insert_data(self, sql_file_path):
         try:
-            with session_factory() as session:
-                data = fetch_data_from_sql_query(sql_file_path)
+            with (
+                self.session as session,
+                open(sql_file_path, "r") as file
+            ):
+                sql_queries = file.readlines()
+                for query in sql_queries:
+                    session.execute(text(query.strip()))
+                session.commit()
 
+        except Exception as e:
+            session.rollback()
+            print(f"An error occurred while adding data: {e}")
+
+
+class BaseOrm:
+    def __init__(self, engine, base, session):
+        self.engine = engine
+        self.base = base
+        self.session = session
+
+    def create_tables(self):
+        self.base.metadata.drop_all(self.engine)
+        self.base.metadata.create_all(self.engine)
+
+    def insert_data(self, sql_file_path, orm_class):
+        try:
+            with self.session() as session:
+                data = fetch_data_from_sql_query(sql_file_path)
                 for row in data["data"]:
-                    session.add(clss_table(**row))
+                    session.add(orm_class(**row))
 
                 session.commit()
 
         except Exception as e:
             session.rollback()
-            print(f"An error occurred: {e}")
+            print(f"An error occurred while adding data: {e}")
