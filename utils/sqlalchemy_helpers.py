@@ -47,7 +47,7 @@ class BaseCore:
     def insert_data(self, sql_file_path):
         try:
             with (
-                self.session as session,
+                self.session() as session,
                 open(sql_file_path, "r") as file
             ):
                 sql_queries = file.readlines()
