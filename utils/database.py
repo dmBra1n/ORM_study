@@ -1,5 +1,7 @@
+from typing import Annotated
+
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, mapped_column, sessionmaker
 
 from utils.config import settings
 
@@ -9,6 +11,10 @@ sync_engine = create_engine(
 )
 
 session_factory = sessionmaker(sync_engine)
+
+PRIMARY_KEY = Annotated[
+    int, mapped_column(primary_key=True, autoincrement=True)
+]
 
 
 def checking_connection_database() -> str:
