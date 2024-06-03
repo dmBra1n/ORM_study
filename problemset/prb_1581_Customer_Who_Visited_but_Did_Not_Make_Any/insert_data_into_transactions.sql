@@ -1,0 +1,5 @@
+insert into Transactions (transaction_id, visit_id, amount) values ('2', '5', '310')
+insert into Transactions (transaction_id, visit_id, amount) values ('3', '5', '300')
+insert into Transactions (transaction_id, visit_id, amount) values ('9', '5', '200')
+insert into Transactions (transaction_id, visit_id, amount) values ('12', '1', '910')
+insert into Transactions (transaction_id, visit_id, amount) values ('13', '2', '970')
