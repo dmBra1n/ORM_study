@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import VARCHAR, Column, Enum, Integer, MetaData, Table
+from sqlalchemy import String, Column, Enum, Integer, MetaData, Table
 from sqlalchemy.orm import Mapped, mapped_column
 
 from utils.database import PRIMARY_KEY, Base
@@ -14,7 +14,7 @@ class Sex(enum.Enum):
 class SalaryOrm(Base):
     __tablename__ = "salary"
     id: Mapped[PRIMARY_KEY]
-    name: Mapped[str] = mapped_column(VARCHAR(100))
+    name: Mapped[str] = mapped_column(String(100))
     sex: Mapped[Sex]
     salary: Mapped[int]
 
@@ -25,7 +25,7 @@ salary_table = Table(
     "salary",
     metadata_obj,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("name", VARCHAR(100)),
+    Column("name", String(100)),
     Column("sex", Enum(Sex)),
     Column("salary", Integer)
 )
