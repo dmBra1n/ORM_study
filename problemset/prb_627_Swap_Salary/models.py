@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import String, Column, Enum, Integer, MetaData, Table
+from sqlalchemy import Column, Enum, Integer, MetaData, String, Table
 from sqlalchemy.orm import Mapped, mapped_column
 
 from utils.database import PRIMARY_KEY, Base
