@@ -9,13 +9,13 @@ def delete_all_tables(tables: List[str]):
     if tables:
         with sync_engine.connect() as conn:
             for table_name in tables:
-                stmt = f"DROP TABLE {table_name} CASCADE;"
+                stmt = f"""DROP TABLE "{table_name}" CASCADE;"""
                 conn.execute(text(stmt))
-                print(f"#The {table_name} table has been DELETED.")
+                print(f'[INFO] Table "{table_name}" has been deleted')
 
             conn.commit()
     else:
-        print("#There are no tables in the database")
+        print("[INFO] There are no tables in the database")
 
 
 def main():
