@@ -5,6 +5,7 @@ This project was created for my learning and practice of working with SQLAlchemy
 Here I will share code examples and problem solutions to improve my SQL query writing skills using SQLAlchemy.
 
 ## Solved problems
+The tasks are arranged in the order of their solution
 
 1. [1890. The Latest Login in 2020](https://leetcode.com/problems/the-latest-login-in-2020/description) - [сode](https://github.com/dmBra1n/SQLAlchemy-LeetCode-Tasks/tree/main/problemset/prb_1890_The_Latest_Login_in_2020)
 2. [196. Delete Duplicate Emails](https://leetcode.com/problems/delete-duplicate-emails/description/) - [сode](https://github.com/dmBra1n/SQLAlchemy-LeetCode-Tasks/tree/main/problemset/prb_196_Delete_Duplicate_Emails)
